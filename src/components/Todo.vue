@@ -56,9 +56,11 @@
                     </div>
 
                     <div class="bulk-action" v-if="task.done==true">
-                        <p>Bulk Action</p>
-                        <button class="done-btn">Done</button>
-                        <button @click="removeTask(index)" class=" remove-btn">Remove</button>
+                        <div class="bulk-action-detail">
+                            <p>Bulk Action</p>
+                            <button class="done-btn">Done</button>
+                            <button @click="removeTask(index)" class=" remove-btn">Remove</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -243,6 +245,18 @@
         border-top: none;
         margin: 0 0 20px 20px;
         padding: 25px;
+    }
+
+    .bulk-action {
+        position: absolute;
+        top: auto;
+        width: 600px;
+        bottom: 30px;
+        background-color: #BBB;
+    }
+
+    .bulk-action-detail {
+        position: relative;
     }
     .check-list {
         width: 20px;
