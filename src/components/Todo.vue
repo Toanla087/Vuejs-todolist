@@ -27,14 +27,14 @@
             <div class="todo-task">
                 <h1>To Do List</h1>
                 <input type="text" v-model="search" placeholder="Search..." class="todo-search">
-                <div v-for="(task,index) in filtertasks" :key="index" class="task-list">
+                <div v-for="(task,index) in filterTasks" :key="index" class="task-list">
                     <div class="task-name">
-                        <input type="checkbox" v-model="task.done" class="check-list">
-                        <input type="text" v-model="task.name" :disabled="inputDisabled" :class="{done: task.done}" class="todo-name todo-item">
-                        <button @click="inputDisabled = !inputDisabled" class=" edit-btn">Detail</button>
+                        <input type="checkbox" v-model="task.done" class="check-list" @click="task.done = !isDone">
+                        <input type="text" v-model="task.name" :disabled="inputDisabled" class="todo-name todo-item">
+                        <button @click="isDetail = !isDetail" class=" edit-btn">Detail</button>
                         <button @click="removeTask(index)" class=" remove-btn">Remove</button>
                     </div>
-                    <div class="task-detail">
+                    <div class="task-detail" v-if="isDetail">
                         <input type="text" v-model="task.name" class="todo-name" :disabled="inputDisabled">
                         <label class="label-des">Description</label>
                         <textarea v-model="task.des" class="todo-des"></textarea>
@@ -52,7 +52,13 @@
                                 </select>
                             </div>
                         </div>
-                        <button @click="addTask()" class="btn">Update</button>
+                        <button @click="isDetail = !isDetail" class="btn">Update</button>
+                    </div>
+
+                    <div class="bulk-action" v-if="task.done==true">
+                        <p>Bulk Action</p>
+                        <button class="done-btn">Done</button>
+                        <button @click="removeTask(index)" class=" remove-btn">Remove</button>
                     </div>
                 </div>
             </div>
@@ -77,11 +83,13 @@
               {name: 'olala', des: 'hêheheh', date: '15/12/2022', pri: 'Normal', done: false},
               {name: 'toan', des: 'hêheheh', date: '15/12/2022', pri: 'Normal', done: false},
           ],
+          isDetail: false,
+          isDone: false,
           inputDisabled: true,
       }
     },
     computed: {
-        filtertasks: function() {
+        filterTasks: function() {
             return this.tasks.filter((task) => {
                 return task.name.match(this.search);
             })
@@ -112,15 +120,15 @@
   </script>
   
   <style scoped>
-  #todo-list {
-      background-color: #fafafa;
-      display: flex;
-      justify-content: center;
-      box-sizing: border-box;
+    #todo-list {
+        background-color: #fafafa;
+        display: flex;
+        justify-content: center;
+        box-sizing: border-box;
     }
     .task, .todo {
-      display: inline-block;
-      border: 1px solid #000;
+        display: inline-block;
+        border: 1px solid #000;
     }
 
     .newtask {
@@ -129,68 +137,66 @@
     .todo-task {
         margin: 65px;
     }
-  .newtask, .task-detail {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 600px;
-  }
+    .newtask, .task-detail {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 600px;
+    }
 
-  .task-list {
-    /* display: flex;
-    flex-direction: ; */
-    display: block;
-    box-sizing: border-box;
-  }
-  .task-name {
-    display: flex;
-    align-items: center;
-  }
-  .done {
-      text-decoration: line-through;
-  }
-  h1 {
-      font-size: 50px;
-  }
-  .todo-name {
-      width: calc(100%-8px);
-      height: 40px;
-      font-size: 20px;
-  }
+    .task-list {
+        display: block;
+        box-sizing: border-box;
+    }
+    .task-name {
+        display: flex;
+        align-items: center;
+    }
+    .done {
+        text-decoration: line-through;
+    }
+    h1 {
+        font-size: 50px;
+    }
+    .todo-name {
+        width: calc(100%-8px);
+        height: 40px;
+        font-size: 20px;
+    }
 
-  .label-des {
-    text-align: left;
-    font-weight: 700;
-    margin: 30px 0 10px 0;
-  }
+    .label-des {
+        text-align: left;
+        font-weight: 700;
+        margin: 30px 0 10px 0;
+    }
 
-  .todo-des {
-    width: calc(100%-6px);
-    height: 200px;
-    border: 1px solid #000;
-  }
-  
-  .date-pri {
-    display: flex;
-    justify-content: space-between;
-  }
+    .todo-des {
+        width: calc(100%-6px);
+        height: 200px;
+        border: 1px solid #000;
+    }
 
-  .due-date, .priority {
-    display: flex;
-    flex-direction: column;
-    width: 275px;
-  }
+    .date-pri {
+        display: flex;
+        justify-content: space-between;
+    }
 
-  .label-date {
-    text-align: left;
-    font-weight: 700;
-    margin: 30px 0 10px 0;
-  }
+    .due-date, .priority {
+        display: flex;
+        flex-direction: column;
+        width: 275px;
+    }
 
-  .todo-date {
-    width: 100%;
-    height: 38px;
-    border: 1px solid #000;
+    .label-date {
+        text-align: left;
+        font-weight: 700;
+        margin: 30px 0 10px 0;
+    }
+
+    .todo-date {
+        width: 100%;
+        height: 38px;
+        border: 1px solid #000;
     }
 
     .label-priority {
@@ -215,7 +221,7 @@
         color: #fff;
         background-color: #5cb85c;
     }
- 
+
     .btn:hover {
         cursor: pointer;
     } 
@@ -238,16 +244,16 @@
         margin: 0 0 20px 20px;
         padding: 25px;
     }
-  .check-list {
-      width: 20px;
-      height: 20px;
-  }
-  div .todo-item {
-      font-size: 30px;
-      border: none;
-      width: 40%;
-  }
-  .edit-btn, .remove-btn {
-      font-size: 30px;
-  }
+    .check-list {
+        width: 20px;
+        height: 20px;
+    }
+    div .todo-item {
+        font-size: 30px;
+        border: none;
+        width: 40%;
+    }
+    .edit-btn, .remove-btn {
+        font-size: 30px;
+    }
   </style>
